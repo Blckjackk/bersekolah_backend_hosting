@@ -1,0 +1,25 @@
+# SSH Configuration untuk Bersekolah API Deployment
+# Update konfigurasi ini sesuai dengan hosting Anda
+
+# Hostinger Configuration
+SSH_HOST="u123456789.hostinger.com"
+SSH_USER="u123456789"
+SSH_PORT="22"
+SSH_KEY="~/.ssh/id_rsa"
+
+# Remote Paths
+FRONTEND_PATH="/domains/bersekolah.com/public_html"
+BACKEND_PATH="/domains/api.bersekolah.com/public_html"
+
+# Local Paths
+LOCAL_APP_PATH="./app"
+LOCAL_CONFIG_PATH="./config"
+LOCAL_ROUTES_PATH="./routes"
+LOCAL_PUBLIC_PATH="./public"
+LOCAL_BOOTSTRAP_PATH="./bootstrap"
+
+# Instructions:
+# 1. Ganti SSH_HOST dengan hostname hosting Anda
+# 2. Ganti SSH_USER dengan username hosting Anda
+# 3. Ganti SSH_KEY dengan path ke SSH key Anda
+# 4. Sesuaikan path remote sesuai dengan struktur hosting Anda
