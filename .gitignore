@@ -1,1 +1,6 @@
-node_modules/ bin/ obj/ .env appsettings.json
+node_modules/ 
+bin/ 
+obj/ 
+.env 
+appsettings.json
+vendor/
