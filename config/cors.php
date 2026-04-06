@@ -13,6 +13,7 @@ return [
         'https://bersekolah.com',
         'https://www.bersekolah.com',
         'http://localhost:4321', // untuk development lokal
+        'http://localhost:4322', // untuk development lokal
         'http://localhost:3000', // untuk development lokal
     ],
     'allowed_origins_patterns' => [
