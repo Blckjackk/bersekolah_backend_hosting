@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use App\Models\DocumentType;   // ✅ IMPORT DocumentType
 use App\Models\BeswanDocument; // ✅ IMPORT MODEL YANG BENAR
+use App\Models\InterviewSchedule;
 
 class AdminBeasiswaApplicationController extends Controller
 {
@@ -315,6 +316,23 @@ class AdminBeasiswaApplicationController extends Controller
                 'reviewed_by' => Auth::id(),
             ]);
 
+            // ✅ ADDED: Sync with interview_schedules table if status is lolos_berkas
+            if ($request->status === 'lolos_berkas' && $request->interview_date && $request->interview_time) {
+                InterviewSchedule::updateOrCreate(
+                    [
+                        'beswan_id' => $application->beswan_id,
+                        'application_id' => $application->id,
+                    ],
+                    [
+                        'tanggal_wawancara' => $request->interview_date,
+                        'jam_mulai' => $request->interview_time,
+                        'lokasi_atau_link' => $request->interview_link,
+                        'status' => 'scheduled',
+                        'created_by' => Auth::id(),
+                    ]
+                );
+            }
+
             // Load relationships for response
             $application->load(['beswan.user', 'beasiswaPeriod', 'reviewer']);
 
@@ -421,6 +439,22 @@ class AdminBeasiswaApplicationController extends Controller
             if ($request->status === 'lolos_wawancara') {
                 $updateData['interview_date'] = $request->interview_date;
                 $updateData['interview_link'] = $request->interview_link;
+                
+                // ✅ ADDED: Sync with interview_schedules if needed
+                if ($request->interview_date) {
+                    InterviewSchedule::updateOrCreate(
+                        [
+                            'beswan_id' => $application->beswan_id,
+                            'application_id' => $application->id,
+                        ],
+                        [
+                            'tanggal_wawancara' => $request->interview_date,
+                            'lokasi_atau_link' => $request->interview_link,
+                            'status' => 'scheduled',
+                            'created_by' => Auth::id(),
+                        ]
+                    );
+                }
             }
 
             $application->update($updateData);
@@ -477,7 +511,7 @@ class AdminBeasiswaApplicationController extends Controller
         try {
             // ✅ SAFE: Cek dokumen terverifikasi melalui relasi DocumentType
             $requiredDocumentCodes = [
-                'student_proof', 'identity_proof', 'photo', 'instagram_follow', 'twibbon_post'
+                'student_proof', 'identity_proof', 'photo', 'instagram_follow', 'twibbon_post', 'poster_share'
             ];
 
             $verifiedCount = 0;

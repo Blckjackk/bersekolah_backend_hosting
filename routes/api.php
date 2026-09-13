@@ -28,6 +28,8 @@ use App\Http\Controllers\ExportDataController;
 use App\Http\Controllers\BeasiswaCountdownController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\InterviewScheduleController;
 use Illuminate\Support\Facades\Log;
 
 
@@ -104,6 +106,10 @@ Route::get('/public/beasiswa-periods', [BeasiswaPeriodsController::class, 'getPu
 
 // Public Document Types - No authentication needed for frontend to fetch available document types
 Route::get('/document-types', [BesWanDocumentController::class, 'getDocumentTypes'])->withoutMiddleware(['auth', 'auth:sanctum']);
+
+// Public Gallery Routes - Dapat diakses tanpa login
+Route::get('/gallery', [GalleryController::class, 'index'])->withoutMiddleware(['auth', 'auth:sanctum']);
+Route::get('/gallery/{id}', [GalleryController::class, 'show'])->withoutMiddleware(['auth', 'auth:sanctum']);
 
 Route::options('/public/beasiswa-periods', function() {
     return response()->json([], 200, [
@@ -216,6 +222,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload-twibon', function(Request $request) {
         return app(BesWanDocumentController::class)->uploadDocument($request, 'twibbon_post');
     });
+
+    // Upload Endpoints - Bukti Share Poster ke Grup
+    Route::post('/upload-bukti-share-poster', function(Request $request) {
+        return app(BesWanDocumentController::class)->uploadDocument($request, 'poster_share');
+    });
     
     // Upload Endpoints - Dokumen Pendukung
     Route::post('/upload-sertifikat-prestasi', function(Request $request) {
@@ -323,6 +334,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/documents/edit-status', [App\Http\Controllers\BesWanDocumentController::class, 'getEditStatus']);
 });
 
+// Interview Schedule - Peserta melihat jadwal wawancara mereka sendiri (read-only)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/interview-schedule', [InterviewScheduleController::class, 'mySchedule']);
+});
+
 // Ini buat Countdown Timer 
 Route::get('/countdown/pendaftaran', [BeasiswaCountdownController::class, 'countdown']);
 
@@ -428,6 +444,26 @@ Route::middleware(['auth:sanctum', 'role:admin,superadmin'])->prefix('admin')->g
         
         // Comprehensive review (with interview setup)
         Route::patch('/{id}/review', [App\Http\Controllers\AdminBeasiswaApplicationController::class, 'reviewApplication']);
+    });
+
+    // Gallery Management (Admin)
+    Route::prefix('gallery')->group(function () {
+        Route::get('/', [GalleryController::class, 'adminIndex']);
+        Route::post('/', [GalleryController::class, 'store']);
+        Route::put('/{id}', [GalleryController::class, 'update']);
+        Route::delete('/{id}', [GalleryController::class, 'destroy']);
+        Route::post('/{id}/photos', [GalleryController::class, 'uploadPhotos']);
+        Route::get('/{id}/photos', [GalleryController::class, 'getPhotos']);
+        Route::delete('/photos/{photoId}', [GalleryController::class, 'deletePhoto']);
+    });
+
+    // Interview Schedule Management (Admin)
+    Route::prefix('interview-schedules')->group(function () {
+        Route::get('/', [InterviewScheduleController::class, 'index']);
+        Route::post('/', [InterviewScheduleController::class, 'store']);
+        Route::put('/{id}', [InterviewScheduleController::class, 'update']);
+        Route::delete('/{id}', [InterviewScheduleController::class, 'destroy']);
+        Route::get('/calendar', [InterviewScheduleController::class, 'calendarData']);
     });
 });
 
