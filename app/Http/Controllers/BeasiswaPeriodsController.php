@@ -122,6 +122,15 @@ class BeasiswaPeriodsController extends Controller
                 $this->deactivateOtherPeriods();
             }
 
+            // ✅ FIX: Auto-sync is_active dengan field status
+            // Jika status = 'active', pastikan is_active = true (dan sebaliknya)
+            if (isset($validatedData['status'])) {
+                $validatedData['is_active'] = ($validatedData['status'] === 'active');
+                if ($validatedData['is_active']) {
+                    $this->deactivateOtherPeriods();
+                }
+            }
+
             $beasiswaPeriod = BeasiswaPeriods::create($validatedData);
 
             // Load counts
@@ -183,6 +192,16 @@ class BeasiswaPeriodsController extends Controller
             // If this period is being set to active, deactivate all others
             if (isset($validatedData['is_active']) && $validatedData['is_active'] && (!$beasiswaPeriod->is_active)) {
                 $this->deactivateOtherPeriods();
+            }
+
+            // ✅ FIX: Auto-sync is_active dengan field status
+            // Jika status berubah ke 'active', pastikan is_active = true
+            if (isset($validatedData['status'])) {
+                $newIsActive = ($validatedData['status'] === 'active');
+                if ($newIsActive && !$beasiswaPeriod->is_active) {
+                    $this->deactivateOtherPeriods();
+                }
+                $validatedData['is_active'] = $newIsActive;
             }
 
             // Update data

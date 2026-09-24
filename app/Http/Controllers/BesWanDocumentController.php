@@ -80,17 +80,23 @@ class BesWanDocumentController extends Controller
             $documentType = DocumentType::findOrFail($request->document_type_id);
             
             // Check if document already exists and verified
-            $existingDoc = BeswanDocument::where('beswan_id', $beswan->id)
+            $existingVerifiedDoc = BeswanDocument::where('beswan_id', $beswan->id)
                 ->where('document_type_id', $request->document_type_id)
                 ->where('status', 'verified')
                 ->first();
 
-            if ($existingDoc) {
+            if ($existingVerifiedDoc) {
                 return response()->json([
                     'message' => 'Dokumen jenis ini sudah terverifikasi dan tidak dapat diubah.',
-                    'existing_document' => $existingDoc
+                    'existing_document' => $existingVerifiedDoc
                 ], 400);
             }
+
+            // Find any existing non-verified document (pending or rejected) to replace
+            $existingDoc = BeswanDocument::where('beswan_id', $beswan->id)
+                ->where('document_type_id', $request->document_type_id)
+                ->whereIn('status', ['pending', 'rejected'])
+                ->first();
 
             // Map document types to folder paths
             $folderMap = [
@@ -110,7 +116,7 @@ class BesWanDocumentController extends Controller
             $filename = time() . '_' . $beswan->id . '_' . $documentType->code . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs($folderPath, $filename, 'public');
 
-            // Delete existing document if any
+            // Delete existing pending/rejected document if any
             if ($existingDoc) {
                 if (Storage::disk('public')->exists($existingDoc->file_path)) {
                     Storage::disk('public')->delete($existingDoc->file_path);

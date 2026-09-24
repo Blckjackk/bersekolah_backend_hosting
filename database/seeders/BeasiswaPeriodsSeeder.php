@@ -27,7 +27,7 @@ class BeasiswaPeriodsSeeder extends Seeder
         // Enable kembali foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         
-        // Data periode beasiswa untuk tahun 2025
+        // Data periode beasiswa
         $periods = [
             [
                 'tahun' => 2025,
@@ -37,8 +37,8 @@ class BeasiswaPeriodsSeeder extends Seeder
                 'akhir_pendaftaran' => '2025-08-31',
                 'mulai_beasiswa' => '2025-09-01',
                 'akhir_beasiswa' => '2026-06-30',
-                'status' => 'active',
-                'is_active' => true,
+                'status' => 'draft',
+                'is_active' => false,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -47,11 +47,11 @@ class BeasiswaPeriodsSeeder extends Seeder
                 'nama_periode' => 'Periode 2026',
                 'deskripsi' => 'Periode beasiswa tahun 2026',
                 'mulai_pendaftaran' => '2026-01-01',
-                'akhir_pendaftaran' => '2026-08-31',
-                'mulai_beasiswa' => '2026-09-01',
+                'akhir_pendaftaran' => '2026-09-30',
+                'mulai_beasiswa' => '2026-10-01',
                 'akhir_beasiswa' => '2027-06-30',
-                'status' => 'draft',
-                'is_active' => false,
+                'status' => 'active',
+                'is_active' => true,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

@@ -57,14 +57,6 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('dreyadmin123'),
         ]);
 
-         User::create([
-            'name' => 'Rhea',
-            'email' => 'rhea@gmail.com',
-            'phone' => '087654321094',
-            'role' => 'user',
-            'password' => Hash::make('password'),
-        ]);
-
         // Menjalankan seeder untuk konten bersekolah
         $this->call([
             KontenBersekolahSeeder::class,
