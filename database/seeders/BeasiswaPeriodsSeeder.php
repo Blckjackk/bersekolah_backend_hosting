@@ -47,7 +47,7 @@ class BeasiswaPeriodsSeeder extends Seeder
                 'nama_periode' => 'Periode 2026',
                 'deskripsi' => 'Periode beasiswa tahun 2026',
                 'mulai_pendaftaran' => '2026-01-01',
-                'akhir_pendaftaran' => '2026-09-30',
+                'akhir_pendaftaran' => '2026-10-31',
                 'mulai_beasiswa' => '2026-10-01',
                 'akhir_beasiswa' => '2027-06-30',
                 'status' => 'active',
